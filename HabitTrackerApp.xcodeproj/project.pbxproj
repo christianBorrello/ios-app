@@ -35,14 +35,14 @@
 			path = HabitTrackerApp;
 			sourceTree = "<group>";
 		};
-		AA7401C42D934A0700903096 /* HabitTrackerAppTests */ = {
+		AA7401C42D934A0700903096 /* HabitTrackerTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = HabitTrackerAppTests;
+			path = HabitTrackerTests;
 			sourceTree = "<group>";
 		};
-		AA7401CE2D934A0800903096 /* HabitTrackerAppUITests */ = {
+		AA7401CE2D934A0800903096 /* HabitTrackerUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = HabitTrackerAppUITests;
+			path = HabitTrackerUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,10 +75,10 @@
 		AA7401A82D934A0500903096 = {
 			isa = PBXGroup;
 			children = (
-				AA7401B32D934A0500903096 /* HabitTrackerApp */,
-				AA7401C42D934A0700903096 /* HabitTrackerAppTests */,
-				AA7401CE2D934A0800903096 /* HabitTrackerAppUITests */,
+				AA7401C42D934A0700903096 /* HabitTrackerTests */,
+				AA7401CE2D934A0800903096 /* HabitTrackerUITests */,
 				AA7401B22D934A0500903096 /* Products */,
+				AA7401B32D934A0500903096 /* HabitTrackerApp */,
 			);
 			sourceTree = "<group>";
 		};
@@ -131,7 +131,7 @@
 				AA7401C32D934A0700903096 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				AA7401C42D934A0700903096 /* HabitTrackerAppTests */,
+				AA7401C42D934A0700903096 /* HabitTrackerTests */,
 			);
 			name = HabitTrackerAppTests;
 			packageProductDependencies = (
@@ -154,7 +154,7 @@
 				AA7401CD2D934A0800903096 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				AA7401CE2D934A0800903096 /* HabitTrackerAppUITests */,
+				AA7401CE2D934A0800903096 /* HabitTrackerUITests */,
 			);
 			name = HabitTrackerAppUITests;
 			packageProductDependencies = (
