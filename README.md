@@ -49,6 +49,8 @@ App iOS per il tracciamento delle abitudini e la gestione dei task personali, co
 - [x] Navigazione tra settimane (prec/succ)
 - [x] Visualizzazione task e abitudini per giorno
 - [x] Calendario in file separato
+- [ ] Rendere funzionale il pulsante per checkare l'attività (task o abitudine)
+- [ ] Dare all'utente la possibilità di aprire il singolo Task o Attività a partire dalla CalendarView
 
 ---
 
