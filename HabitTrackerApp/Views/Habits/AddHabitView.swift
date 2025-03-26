@@ -27,18 +27,8 @@ struct AddHabitView: View {
                             selectedDays = value ? Set(Weekday.allCases) : []
                         }
 
-                    ForEach(Weekday.allCases) { day in
-                        Toggle(day.displayName, isOn: Binding(
-                            get: { selectedDays.contains(day) },
-                            set: { isOn in
-                                if isOn {
-                                    selectedDays.insert(day)
-                                } else {
-                                    selectedDays.remove(day)
-                                    selectAll = false
-                                }
-                            }
-                        ))
+                    ForEach(Weekday.allCases, id: \.self) { day in
+                        Toggle(day.fullName, isOn: bindingForDay(day))
                     }
                 }
             }
@@ -46,18 +36,46 @@ struct AddHabitView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Aggiungi") {
-                        let habit = Habit(name: name, emoji: emoji.isEmpty ? "🖊️" : emoji, recurrence: Array(selectedDays))
+                        let habit = Habit(
+                            name: name,
+                            emoji: emoji.isEmpty ? "🖊️" : emoji,
+                            recurrence: Array(selectedDays)
+                        )
                         onAdd(habit)
                         dismiss()
-                    }.disabled(name.isEmpty || selectedDays.isEmpty)
+                    }
+                    .disabled(name.isEmpty || selectedDays.isEmpty)
                 }
+
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Annulla") { dismiss() }
                 }
             }
         }
     }
+
+    // MARK: - Helper per toggle
+
+    private func bindingForDay(_ day: Weekday) -> Binding<Bool> {
+        Binding<Bool>(
+            get: {
+                selectedDays.contains(day)
+            },
+            set: { isOn in
+                if isOn {
+                    selectedDays.insert(day)
+                    if selectedDays.count == Weekday.allCases.count {
+                        selectAll = true
+                    }
+                } else {
+                    selectedDays.remove(day)
+                    selectAll = false
+                }
+            }
+        )
+    }
 }
+
 
 #Preview {
     AddHabitView { _ in }
