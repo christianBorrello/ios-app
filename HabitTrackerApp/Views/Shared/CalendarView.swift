@@ -4,6 +4,8 @@ struct CalendarView: View {
     let tasks: [TaskItem]
     let habits: [Habit]
     @State private var selectedWeekOffset = 0
+    @State private var editingTask: TaskItem?
+    @State private var editingHabit: Habit?
 
     // MARK: - Computed Properties
 
@@ -22,8 +24,38 @@ struct CalendarView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
+                    // Sezioni dei giorni con task
                     ForEach(weekDates, id: \.self) { date in
-                        daySection(for: date)
+                        let dayTasks = tasks.filter {
+                            Calendar.current.isDate($0.dueDate, inSameDayAs: date)
+                        }
+
+                        Group {
+                            if !dayTasks.isEmpty {
+                                daySection(for: date, tasks: dayTasks)
+                            }
+                        }
+                    }
+
+                    // Sezione: tutte le abitudini attive
+                    Group {
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Tutte le abitudini attive")
+                                .font(.title3)
+                                .bold()
+
+                            ForEach(habits) { habit in
+                                HabitCardView(
+                                    habit: habit,
+                                    currentWeekday: .monday,
+                                    currentDate: Date(),
+                                    onToggle: {},
+                                    onTap: { editingHabit = habit },
+                                    isToday: false
+                                )
+                            }
+                        }
+                        .padding(.top, 24)
                     }
                 }
                 .padding()
@@ -33,7 +65,6 @@ struct CalendarView: View {
                 ToolbarItemGroup(placement: .bottomBar) {
                     Button(action: { selectedWeekOffset -= 1 }) {
                         Image(systemName: "chevron.left")
-                        Text("")
                     }
                     Spacer()
                     Button("Oggi") {
@@ -41,13 +72,29 @@ struct CalendarView: View {
                     }
                     Spacer()
                     Button(action: { selectedWeekOffset += 1 }) {
-                        Text("")
                         Image(systemName: "chevron.right")
                     }
                 }
             }
+            // Aggiunta modale task/habit
+            .sheet(item: $editingTask) { task in
+                TaskDetailView(
+                    task: task,
+                    onSave: { _ in },
+                    onDelete: { _ in }
+                )
+            }
+            .sheet(item: $editingHabit) { habit in
+                HabitDetailView(
+                    habit: habit,
+                    onSave: { _ in },
+                    onDelete: { _ in }
+                )
+            }
         }
     }
+
+
 
     // MARK: - Helpers
 
@@ -64,13 +111,11 @@ struct CalendarView: View {
         return Weekday(rawValue: weekday == 1 ? 7 : weekday - 1) ?? .monday
     }
     
-    private func daySection(for date: Date) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            let weekday = weekdayForDate(date)
-            let isToday = Calendar.current.isDateInToday(date)
-            let dayTasks = tasks.filter { Calendar.current.isDate($0.dueDate, inSameDayAs: date) }
-            let dayHabits = habits.filter { $0.recurrence.contains(weekday) }
+    private func daySection(for date: Date, tasks: [TaskItem]) -> some View {
+        let weekday = weekdayForDate(date)
+        let isToday = Calendar.current.isDateInToday(date)
 
+        return VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(weekday.fullName)
                     .font(.headline)
@@ -82,48 +127,23 @@ struct CalendarView: View {
             .background(isToday ? Color.blue.opacity(0.1) : Color.clear)
             .cornerRadius(8)
 
-            if dayTasks.isEmpty && dayHabits.isEmpty {
-                Text("Nessuna attività prevista")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            } else {
-                ForEach(dayTasks) { task in
-                    HStack {
-                        Text(task.emoji).font(.title3)
-                        VStack(alignment: .leading) {
-                            Text(task.title)
-                            if !task.description.isEmpty {
-                                Text(task.description)
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                            }
-                        }
-                        Spacer()
-                        Button(action: {
-                            // TO DO: logica completamento task
-                        }) {
-                            Image(systemName: "checkmark.circle")
-                        }
-                    }
-                }
-
-                ForEach(dayHabits) { habit in
-                    HStack {
-                        Text(habit.emoji).font(.title3)
-                        Text(habit.name)
-                        Spacer()
-                        Button(action: {
-                            // TO DO: logica completamento abitudine
-                        }) {
-                            Image(systemName: "checkmark.circle")
-                        }
-                    }
-                }
+            ForEach(tasks) { task in
+                TaskCardView(
+                    task: task,
+                    onToggle: {
+                        // TODO: aggiungi la logica per completamento se vuoi abilitarla qui
+                    },
+                    onTap: {
+                        editingTask = task
+                    },
+                    isToday: isToday
+                )
             }
 
             Divider()
         }
     }
+
 
 }
 

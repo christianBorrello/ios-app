@@ -14,11 +14,22 @@ class HabitsViewModel: ObservableObject {
         }
     }
 
-    func toggleCompletion(for habit: Habit, day: Weekday) {
-        guard var existingHabit = habits.first(where: { $0.id == habit.id }) else { return }
-        if existingHabit.recurrence.contains(day) {
-            existingHabit.completions[day]?.toggle()
-            updateHabit(existingHabit)
+    func deleteHabit(_ habit: Habit) {
+        habits.removeAll { $0.id == habit.id }
+    }
+
+    func toggleCompletion(_ habit: Habit, for day: Weekday) {
+        guard let index = habits.firstIndex(where: { $0.id == habit.id }) else { return }
+
+        if habits[index].recurrence.contains(day) {
+            let current = habits[index].completions[day] ?? false
+            habits[index].completions[day] = !current
+
+            // Streak aggiornato solo per oggi
+            if Calendar.current.isDateInToday(Date()) {
+                habits[index].streak += habits[index].completions[day]! ? 1 : -1
+                habits[index].streak = max(0, habits[index].streak)
+            }
         }
     }
 
@@ -34,7 +45,7 @@ class HabitsViewModel: ObservableObject {
             name: "Leggere",
             emoji: "📚",
             recurrence: Weekday.allCases,
-            completions: [.monday: true, .tuesday: true, .wednesday: true, .thursday: true, .friday: true, .saturday: false, .sunday: false],
+            completions: [.monday: true, .tuesday: true, .wednesday: true, .thursday: true, .friday: false, .saturday: false, .sunday: false],
             streak: 5
         )
         habits = [example1, example2]

@@ -1,112 +1,134 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var username = "Luca"
     @StateObject private var tasksViewModel = TasksViewModel()
     @StateObject private var habitsViewModel = HabitsViewModel()
+    @State private var editingTask: TaskItem?
+    @State private var editingHabit: Habit?
     @State private var showingCalendar = false
+    private let habitPreviewLimit = 3
 
-    private var currentDate: String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "it_IT")
-        formatter.dateFormat = "EEEE d MMMM yyyy"
-        return formatter.string(from: Date()).capitalized
+    private var today: Date { Date() }
+
+    private var currentWeekday: Weekday {
+        let weekday = Calendar.current.component(.weekday, from: today)
+        return Weekday(rawValue: weekday == 1 ? 7 : weekday - 1) ?? .monday
     }
 
     private var tomorrow: Date {
-        Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
+        Calendar.current.date(byAdding: .day, value: 1, to: today) ?? Date()
+    }
+
+    private var tomorrowWeekday: Weekday {
+        let weekday = Calendar.current.component(.weekday, from: tomorrow)
+        return Weekday(rawValue: weekday == 1 ? 7 : weekday - 1) ?? .monday
+    }
+
+    private var formattedToday: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "it_IT")
+        formatter.dateFormat = "d MMMM yyyy"
+        return formatter.string(from: today).capitalized
+    }
+
+    private var formattedTomorrow: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "it_IT")
+        formatter.dateFormat = "d MMMM yyyy"
+        return formatter.string(from: tomorrow).capitalized
     }
 
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
+                VStack(alignment: .leading, spacing: 32) {
 
-                    // Header benvenuto
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Ciao, \(username) 👋")
-                            .font(.title)
+                    // Sezione Oggi (solo Task)
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Tasks - \(formattedToday)")
+                            .font(.title3)
                             .bold()
-                        Text(currentDate)
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                    }
-                    .padding(.top)
 
-                    // Task di oggi
-                    VStack(alignment: .leading) {
-                        Text("Task di oggi")
-                            .font(.headline)
-                        ForEach(tasksViewModel.tasks.filter { Calendar.current.isDateInToday($0.dueDate) }) { task in
-                            HStack {
-                                Text(task.emoji).font(.title2)
-                                VStack(alignment: .leading) {
-                                    Text(task.title).bold()
-                                    Text(task.description).font(.caption).foregroundColor(.gray)
-                                }
-                            }
+                        let todayTasks = tasksViewModel.tasks.filter {
+                            Calendar.current.isDateInToday($0.dueDate)
+                        }
+
+                        ForEach(todayTasks) { task in
+                            TaskCardView(
+                                task: task,
+                                onToggle: { tasksViewModel.toggleCompletion(task) },
+                                onTap: { editingTask = task },
+                                isToday: true
+                            )
                         }
                     }
 
-                    // Abitudini di oggi
-                    VStack(alignment: .leading) {
-                        Text("Abitudini di oggi")
-                            .font(.headline)
-                        ForEach(habitsViewModel.habits.filter { $0.recurrence.contains(currentWeekday) }) { habit in
-                            HStack {
-                                Text(habit.emoji).font(.title2)
-                                Text(habit.name).bold()
-                            }
+                    // Sezione: Tutte le abitudini attive (con anteprima)
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Tutte le abitudini attive")
+                            .font(.title3)
+                            .bold()
+
+                        ForEach(habitsViewModel.habits.prefix(habitPreviewLimit)) { habit in
+                            HabitCardView(
+                                habit: habit,
+                                currentWeekday: currentWeekday,
+                                currentDate: today,
+                                onToggle: {}, // disattivo toggle
+                                onTap: { editingHabit = habit },
+                                isToday: false
+                            )
                         }
-                    }
 
-                    // Task e abitudini di domani
-                    VStack(alignment: .leading) {
-                        Text("Domani")
-                            .font(.headline)
-
-                        let tomorrowTasks = tasksViewModel.tasks.filter { Calendar.current.isDate($0.dueDate, inSameDayAs: tomorrow) }
-                        let tomorrowHabits = habitsViewModel.habits.filter { $0.recurrence.contains(tomorrowWeekday) }
-
-                        if tomorrowTasks.isEmpty && tomorrowHabits.isEmpty {
-                            Text("Nessuna attività prevista")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                        } else {
-                            ForEach(tomorrowTasks) { task in
+                        if habitsViewModel.habits.count > habitPreviewLimit {
+                            Button(action: {
+                                showingCalendar = true
+                            }) {
                                 HStack {
-                                    Text(task.emoji).font(.title2)
-                                    Text(task.title)
+                                    Spacer()
+                                    Text("Vedi tutte le abitudini")
+                                        .font(.caption)
+                                        .padding(8)
+                                    Spacer()
                                 }
-                            }
-                            ForEach(tomorrowHabits) { habit in
-                                HStack {
-                                    Text(habit.emoji).font(.title2)
-                                    Text(habit.name)
-                                }
+                                .background(Color.blue.opacity(0.1))
+                                .cornerRadius(8)
                             }
                         }
-                    }
-
-                    // Pulsante calendario
-                    Button(action: {
-                        showingCalendar = true
-                    }) {
-                        HStack {
-                            Image(systemName: "calendar")
-                            Text("Apri calendario settimanale")
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue.opacity(0.1))
-                        .cornerRadius(10)
                     }
                 }
                 .padding()
             }
             .navigationTitle("Home")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showingCalendar = true
+                    }) {
+                        Image(systemName: "calendar")
+                            .resizable()                   // permette il ridimensionamento
+                            .frame(width: 24, height: 24)  // imposta dimensione icona
+                            .foregroundColor(.primary)     // colore (opzionale)
+                            .padding(6)
+                    }
+                }
+            }
             .sheet(isPresented: $showingCalendar) {
                 CalendarView(tasks: tasksViewModel.tasks, habits: habitsViewModel.habits)
+            }
+            .sheet(item: $editingTask) { task in
+                TaskDetailView(
+                    task: task,
+                    onSave: { tasksViewModel.updateTask($0) },
+                    onDelete: { tasksViewModel.deleteTask($0) }
+                )
+            }
+            .sheet(item: $editingHabit) { habit in
+                HabitDetailView(
+                    habit: habit,
+                    onSave: { habitsViewModel.updateHabit($0) },
+                    onDelete: { habitsViewModel.deleteHabit($0) }
+                )
             }
             .onAppear {
                 tasksViewModel.loadMockTasks()
@@ -114,17 +136,8 @@ struct HomeView: View {
             }
         }
     }
-
-    private var currentWeekday: Weekday {
-        let weekday = Calendar.current.component(.weekday, from: Date())
-        return Weekday(rawValue: weekday == 1 ? 7 : weekday - 1) ?? .monday
-    }
-
-    private var tomorrowWeekday: Weekday {
-        let weekday = Calendar.current.component(.weekday, from: tomorrow)
-        return Weekday(rawValue: weekday == 1 ? 7 : weekday - 1) ?? .monday
-    }
 }
+
 
 #Preview("Home Preview") {
     HomeView()

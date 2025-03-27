@@ -2,8 +2,9 @@ import Foundation
 
 struct TaskItem: Identifiable {
     let id = UUID()
-    let emoji: String
-    let title: String
-    let description: String
-    let dueDate: Date
+    var emoji: String
+    var title: String
+    var description: String
+    var dueDate: Date
+    var isCompleted: Bool = false
 }
