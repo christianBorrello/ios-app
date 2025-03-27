@@ -3,7 +3,10 @@ import SwiftUI
 struct HabitDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State var habit: Habit
+    @State private var showDeleteConfirmation = false
+
     var onSave: (Habit) -> Void
+    var onDelete: (Habit) -> Void
 
     var body: some View {
         Form {
@@ -33,6 +36,12 @@ struct HabitDetailView: View {
                     ))
                 }
             }
+            
+            Section {
+                Button("Elimina abitudine", role: .destructive) {
+                    showDeleteConfirmation = true
+                }
+            }
         }
         .navigationTitle("Modifica Abitudine")
         .toolbar {
@@ -43,12 +52,20 @@ struct HabitDetailView: View {
                 }
             }
         }
+        .alert("Confermi di voler eliminare questa abitudine?", isPresented: $showDeleteConfirmation) {
+            Button("Elimina", role: .destructive) {
+                onDelete(habit)
+                dismiss()
+            }
+            Button("Annulla", role: .cancel) { }
+        }
     }
 }
 
 #Preview {
     HabitDetailView(
         habit: Habit(name: "Allenamento", emoji: "🏃‍♂️", recurrence: [.monday, .wednesday]),
-        onSave: { _ in }
+        onSave: { _ in },
+        onDelete: { _ in }
     )
 }

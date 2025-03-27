@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @State private var selectedTheme: AppTheme = .system
+    @AppStorage("selectedTheme") private var selectedTheme: AppTheme = .system
 
     var body: some View {
         NavigationView {

@@ -3,39 +3,37 @@ import SwiftUI
 struct HabitsView: View {
     @StateObject private var viewModel = HabitsViewModel()
     @State private var showingAddHabit = false
+    @State private var editingHabit: Habit?
+
+    private var currentWeekday: Weekday {
+        let weekday = Calendar.current.component(.weekday, from: Date())
+        return Weekday(rawValue: weekday == 1 ? 7 : weekday - 1) ?? .monday
+    }
 
     var body: some View {
         NavigationView {
-            List {
-                ForEach(viewModel.habits) { habit in
-                    NavigationLink(destination: HabitDetailView(habit: habit, onSave: { updatedHabit in
-                        viewModel.updateHabit(updatedHabit)
-                    })) {
-                        VStack(alignment: .leading) {
-                            HStack {
-                                Text(habit.emoji).font(.largeTitle)
-                                VStack(alignment: .leading) {
-                                    Text(habit.name).font(.headline)
-                                    Text("Streak: \(habit.streak) giorni consecutivi")
-                                        .font(.caption)
-                                        .foregroundColor(.gray)
-                                }
-                            }
-                            HStack(spacing: 8) {
-                                ForEach(habit.recurrence.sorted(), id: \.self) { day in
-                                    Circle()
-                                        .frame(width: 24, height: 24)
-                                        .foregroundColor(habit.completions[day] == true ? .green : .gray.opacity(0.3))
-                                        .overlay(
-                                            Text(day.shortSymbol)
-                                                .font(.caption2)
-                                                .foregroundColor(.white)
-                                        )
-                                }
-                            }
-                        }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    Text("Abitudini Attive")
+                        .font(.title3)
+                        .bold()
+
+                    ForEach(viewModel.habits) { habit in
+                        HabitCardView(
+                            habit: habit,
+                            currentWeekday: currentWeekday,
+                            currentDate: Date(),
+                            onToggle: {
+                                viewModel.toggleCompletion(habit, for: currentWeekday)
+                            },
+                            onTap: {
+                                editingHabit = habit
+                            },
+                            isToday: true
+                        )
                     }
                 }
+                .padding()
             }
             .navigationTitle("Abitudini")
             .toolbar {
@@ -49,6 +47,13 @@ struct HabitsView: View {
                 AddHabitView { newHabit in
                     viewModel.addHabit(newHabit)
                 }
+            }
+            .sheet(item: $editingHabit) { habit in
+                HabitDetailView(
+                    habit: habit,
+                    onSave: { viewModel.updateHabit($0) },
+                    onDelete: { viewModel.deleteHabit($0) }
+                )
             }
             .onAppear {
                 viewModel.mockHabits()

@@ -3,24 +3,39 @@ import SwiftUI
 struct TasksView: View {
     @StateObject private var viewModel = TasksViewModel()
     @State private var showingAddTask = false
+    @State private var editingTask: TaskItem?
 
     var body: some View {
         NavigationView {
-            List {
-                if !viewModel.todayTasks.isEmpty {
-                    Section(header: Text("Oggi")) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    if !viewModel.todayTasks.isEmpty {
+                        Text("Oggi")
+                            .font(.title3).bold()
                         ForEach(viewModel.todayTasks) { task in
-                            taskRow(task)
+                            TaskCardView(
+                                task: task,
+                                onToggle: { viewModel.toggleCompletion(task) },
+                                onTap: { editingTask = task },
+                                isToday: true
+                            )
                         }
                     }
-                }
-                if !viewModel.upcomingTasks.isEmpty {
-                    Section(header: Text("Prossimi giorni")) {
+
+                    if !viewModel.upcomingTasks.isEmpty {
+                        Text("Prossimi giorni")
+                            .font(.title3).bold()
                         ForEach(viewModel.upcomingTasks) { task in
-                            taskRow(task)
+                            TaskCardView(
+                                task: task,
+                                onToggle: {}, // completamento disattivato
+                                onTap: { editingTask = task },
+                                isToday: false
+                            )
                         }
                     }
                 }
+                .padding()
             }
             .navigationTitle("Task")
             .toolbar {
@@ -35,16 +50,12 @@ struct TasksView: View {
                     viewModel.addTask(newTask)
                 }
             }
-        }
-    }
-
-    private func taskRow(_ task: TaskItem) -> some View {
-        HStack {
-            Text(task.emoji).font(.largeTitle)
-            VStack(alignment: .leading) {
-                Text(task.title).font(.headline)
-                Text(task.dueDate, style: .date)
-                    .font(.caption).foregroundColor(.gray)
+            .sheet(item: $editingTask) { task in
+                TaskDetailView(
+                    task: task,
+                    onSave: { viewModel.updateTask($0) },
+                    onDelete: { viewModel.deleteTask($0) }
+                )
             }
         }
     }

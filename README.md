@@ -10,7 +10,7 @@ App iOS per il tracciamento delle abitudini e la gestione dei task personali, co
 - [x] Creazione dell'app con SwiftUI
 - [x] Implementazione architettura MVVM
 - [x] Separazione Views / ViewModels / Models
-- [ ] Sistema di temi (chiaro/scuro/auto)
+- [x] Sistema di temi (chiaro/scuro/auto)
 - [x] Navigazione tramite TabView
 
 ---
@@ -21,6 +21,7 @@ App iOS per il tracciamento delle abitudini e la gestione dei task personali, co
 - [x] Selezione emoji, titolo, descrizione e scadenza
 - [x] Preview dei task
 - [x] Suddivisione in file separati (View, ViewModel, Model)
+- [ ] Aggiungere il popup di conferma eliminazione task
 
 ---
 
@@ -29,8 +30,9 @@ App iOS per il tracciamento delle abitudini e la gestione dei task personali, co
 - [x] Form di aggiunta nuova abitudine
 - [x] Ricorrenza settimanale personalizzabile (giorni selezionabili)
 - [x] Visualizzazione dei pallini settimanali
+- [ ] Aggiungere il meccanismo di checking in base al giorno corrente
 - [ ] Tracciamento dei completamenti e streak
-- [x] Visualizzazione ordinata dei giorni nella dashboard
+- [ ] Ideare un sistema conforme per quando si salta un giorno di streak nel completamento della barra verde
 - [x] Vista dettaglio dell’abitudine con possibilità di modifica
 
 ---
@@ -41,6 +43,7 @@ App iOS per il tracciamento delle abitudini e la gestione dei task personali, co
 - [x] Sezione Abitudini di oggi
 - [x] Riepilogo attività di domani
 - [x] Bottone per aprire calendario
+- [ ] Dare la possibilità di checkare l'attività solo dalla schermata Home e in riferimento al giorno e all'orario di riferimento
 
 ---
 

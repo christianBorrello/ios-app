@@ -14,6 +14,7 @@ struct MainTabView: View {
             SettingsView()
                 .tabItem { Label("Impostazioni", systemImage: "gearshape") }
         }
+        .tint(.primary)
     }
 }
 
