@@ -100,9 +100,16 @@ struct HabitCardView: View {
                 .frame(width: 50)
 
             VStack(alignment: .leading, spacing: 8) {
-                HStack {
+                HStack(spacing: 6) {
                     Text(habit.name)
                         .font(.headline)
+
+                    // 🆕 Mostra orario se esiste
+                    if let time = habit.time {
+                        Text(time.formatted(date: .omitted, time: .shortened))
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
 
                     Text("\(completedCount)/\(selectedDays.count)")
                         .font(.caption)

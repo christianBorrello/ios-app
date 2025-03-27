@@ -117,18 +117,22 @@ struct HomeView: View {
                 CalendarView(tasks: tasksViewModel.tasks, habits: habitsViewModel.habits)
             }
             .sheet(item: $editingTask) { task in
-                TaskDetailView(
-                    task: task,
-                    onSave: { tasksViewModel.updateTask($0) },
-                    onDelete: { tasksViewModel.deleteTask($0) }
-                )
+                NavigationStack {
+                    TaskDetailView(
+                        task: task,
+                        onSave: { tasksViewModel.updateTask($0) },
+                        onDelete: { tasksViewModel.deleteTask($0) }
+                    )
+                }
             }
             .sheet(item: $editingHabit) { habit in
-                HabitDetailView(
-                    habit: habit,
-                    onSave: { habitsViewModel.updateHabit($0) },
-                    onDelete: { habitsViewModel.deleteHabit($0) }
-                )
+                NavigationStack {
+                    HabitDetailView(
+                        habit: habit,
+                        onSave: { habitsViewModel.updateHabit($0) },
+                        onDelete: { habitsViewModel.deleteHabit($0) }
+                    )
+                }
             }
             .onAppear {
                 tasksViewModel.loadMockTasks()

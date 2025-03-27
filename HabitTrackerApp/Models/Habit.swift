@@ -7,5 +7,6 @@ struct Habit: Identifiable {
     var recurrence: [Weekday] // giorni selezionati
     var completions: [Weekday: Bool] = [:] // stato di completamento per la settimana
     var streak: Int = 0 // giorni consecutivi
+    var time: Date? = nil
 }
 

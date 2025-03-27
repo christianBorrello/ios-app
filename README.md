@@ -21,7 +21,9 @@ App iOS per il tracciamento delle abitudini e la gestione dei task personali, co
 - [x] Selezione emoji, titolo, descrizione e scadenza
 - [x] Preview dei task
 - [x] Suddivisione in file separati (View, ViewModel, Model)
-- [ ] Aggiungere il popup di conferma eliminazione task
+- [x] Aggiungere il popup di conferma eliminazione task
+- [x] Aggiungere l'orario oltre la data
+- [x] Aggiungere i pulsanti "salva" e "annulla" nella view di modifica del task
 
 ---
 
@@ -34,6 +36,8 @@ App iOS per il tracciamento delle abitudini e la gestione dei task personali, co
 - [ ] Tracciamento dei completamenti e streak
 - [ ] Ideare un sistema conforme per quando si salta un giorno di streak nel completamento della barra verde
 - [x] Vista dettaglio dell’abitudine con possibilità di modifica
+- [x] Aggiungere l'orario oltre la data (opzionale)
+- [x] Aggiungere i pulsanti "salva" e "annulla" nella view di modifica dell'abitudine
 
 ---
 
@@ -53,7 +57,8 @@ App iOS per il tracciamento delle abitudini e la gestione dei task personali, co
 - [x] Visualizzazione task e abitudini per giorno
 - [x] Calendario in file separato
 - [ ] Rendere funzionale il pulsante per checkare l'attività (task o abitudine)
-- [ ] Dare all'utente la possibilità di aprire il singolo Task o Attività a partire dalla CalendarView
+- [x] Dare all'utente la possibilità di aprire il singolo Task o Attività a partire dalla CalendarView
+- [x] Invece di oggi al centro in basso dare un feedback sulla settimana corrente in modo che l'utente, spostandosi tra le settimane capisca in quale settimana si trova
 
 ---
 

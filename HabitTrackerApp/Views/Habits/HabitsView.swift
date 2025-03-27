@@ -14,10 +14,6 @@ struct HabitsView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    Text("Abitudini Attive")
-                        .font(.title3)
-                        .bold()
-
                     ForEach(viewModel.habits) { habit in
                         HabitCardView(
                             habit: habit,
@@ -35,7 +31,7 @@ struct HabitsView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Abitudini")
+            .navigationTitle("Abitudini Attive")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddHabit = true }) {
@@ -49,11 +45,13 @@ struct HabitsView: View {
                 }
             }
             .sheet(item: $editingHabit) { habit in
-                HabitDetailView(
-                    habit: habit,
-                    onSave: { viewModel.updateHabit($0) },
-                    onDelete: { viewModel.deleteHabit($0) }
-                )
+                NavigationStack {
+                    HabitDetailView(
+                        habit: habit,
+                        onSave: { viewModel.updateHabit($0) },
+                        onDelete: { viewModel.deleteHabit($0) }
+                    )
+                }
             }
             .onAppear {
                 viewModel.mockHabits()

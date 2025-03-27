@@ -17,6 +17,16 @@ struct CalendarView: View {
             calendar.date(byAdding: .day, value: day + selectedWeekOffset * 7, to: startOfWeek)
         }
     }
+    
+    private var currentWeekRangeText: String {
+        guard let start = weekDates.first, let end = weekDates.last else { return "" }
+
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "it_IT")
+        formatter.dateFormat = "d MMMM"
+
+        return "Dal \(formatter.string(from: start)) al \(formatter.string(from: end))"
+    }
 
     // MARK: - Body
 
@@ -24,6 +34,14 @@ struct CalendarView: View {
         NavigationView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
+                    HStack {
+                        Image(systemName: "calendar")
+                        Text(currentWeekRangeText)
+                    }
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal)
+                    
                     // Sezioni dei giorni con task
                     ForEach(weekDates, id: \.self) { date in
                         let dayTasks = tasks.filter {
@@ -67,7 +85,7 @@ struct CalendarView: View {
                         Image(systemName: "chevron.left")
                     }
                     Spacer()
-                    Button("Oggi") {
+                    Button("Settimana del \(formattedDay(Date()))") {
                         selectedWeekOffset = 0
                     }
                     Spacer()
@@ -78,18 +96,22 @@ struct CalendarView: View {
             }
             // Aggiunta modale task/habit
             .sheet(item: $editingTask) { task in
-                TaskDetailView(
-                    task: task,
-                    onSave: { _ in },
-                    onDelete: { _ in }
-                )
+                NavigationStack {
+                    TaskDetailView(
+                        task: task,
+                        onSave: { _ in },
+                        onDelete: { _ in }
+                    )
+                }
             }
             .sheet(item: $editingHabit) { habit in
-                HabitDetailView(
-                    habit: habit,
-                    onSave: { _ in },
-                    onDelete: { _ in }
-                )
+                NavigationStack {
+                    HabitDetailView(
+                        habit: habit,
+                        onSave: { _ in },
+                        onDelete: { _ in }
+                    )
+                }
             }
         }
     }

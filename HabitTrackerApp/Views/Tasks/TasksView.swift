@@ -51,11 +51,13 @@ struct TasksView: View {
                 }
             }
             .sheet(item: $editingTask) { task in
-                TaskDetailView(
-                    task: task,
-                    onSave: { viewModel.updateTask($0) },
-                    onDelete: { viewModel.deleteTask($0) }
-                )
+                NavigationStack {
+                    TaskDetailView(
+                        task: task,
+                        onSave: { viewModel.updateTask($0) },
+                        onDelete: { viewModel.deleteTask($0) }
+                    )
+                }
             }
         }
     }

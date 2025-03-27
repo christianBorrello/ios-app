@@ -2,11 +2,19 @@ import SwiftUI
 
 struct HabitDetailView: View {
     @Environment(\.dismiss) private var dismiss
-    @State var habit: Habit
+    @State private var habit: Habit
+    @State private var originalHabit: Habit
     @State private var showDeleteConfirmation = false
 
     var onSave: (Habit) -> Void
     var onDelete: (Habit) -> Void
+
+    init(habit: Habit, onSave: @escaping (Habit) -> Void, onDelete: @escaping (Habit) -> Void) {
+        _habit = State(initialValue: habit)
+        _originalHabit = State(initialValue: habit)
+        self.onSave = onSave
+        self.onDelete = onDelete
+    }
 
     var body: some View {
         Form {
@@ -30,13 +38,13 @@ struct HabitDetailView: View {
                                     habit.recurrence.append(day)
                                 }
                             } else {
-                                habit.recurrence.removeAll(where: { $0 == day })
+                                habit.recurrence.removeAll { $0 == day }
                             }
                         }
                     ))
                 }
             }
-            
+
             Section {
                 Button("Elimina abitudine", role: .destructive) {
                     showDeleteConfirmation = true
@@ -48,6 +56,13 @@ struct HabitDetailView: View {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Salva") {
                     onSave(habit)
+                    dismiss()
+                }
+            }
+
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Annulla") {
+                    habit = originalHabit
                     dismiss()
                 }
             }
@@ -63,9 +78,11 @@ struct HabitDetailView: View {
 }
 
 #Preview {
-    HabitDetailView(
-        habit: Habit(name: "Allenamento", emoji: "🏃‍♂️", recurrence: [.monday, .wednesday]),
-        onSave: { _ in },
-        onDelete: { _ in }
-    )
+    NavigationStack {
+        HabitDetailView(
+            habit: Habit(name: "Allenamento", emoji: "🏃‍♂️", recurrence: [.monday, .wednesday]),
+            onSave: { _ in },
+            onDelete: { _ in }
+        )
+    }
 }

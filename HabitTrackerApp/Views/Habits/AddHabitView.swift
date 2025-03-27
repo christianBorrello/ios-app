@@ -7,6 +7,8 @@ struct AddHabitView: View {
     @State private var emoji = ""
     @State private var selectedDays: Set<Weekday> = []
     @State private var selectAll = false
+    @State private var hasTime = false // 🆕
+    @State private var time = Date()   // 🆕
 
     var onAdd: (Habit) -> Void
 
@@ -19,6 +21,14 @@ struct AddHabitView: View {
 
                 Section(header: Text("Nome Abitudine")) {
                     TextField("Nome", text: $name)
+                }
+
+                // 🆕 Sezione orario opzionale
+                Section(header: Text("Orario (opzionale)")) {
+                    Toggle("Imposta orario", isOn: $hasTime)
+                    if hasTime {
+                        DatePicker("Ora", selection: $time, displayedComponents: .hourAndMinute)
+                    }
                 }
 
                 Section(header: Text("Ricorrenza settimanale")) {
@@ -39,7 +49,8 @@ struct AddHabitView: View {
                         let habit = Habit(
                             name: name,
                             emoji: emoji.isEmpty ? "🖊️" : emoji,
-                            recurrence: Array(selectedDays)
+                            recurrence: Array(selectedDays),
+                            time: hasTime ? time : nil // 🆕
                         )
                         onAdd(habit)
                         dismiss()
@@ -57,10 +68,8 @@ struct AddHabitView: View {
     // MARK: - Helper per toggle
 
     private func bindingForDay(_ day: Weekday) -> Binding<Bool> {
-        Binding<Bool>(
-            get: {
-                selectedDays.contains(day)
-            },
+        Binding(
+            get: { selectedDays.contains(day) },
             set: { isOn in
                 if isOn {
                     selectedDays.insert(day)
@@ -75,7 +84,6 @@ struct AddHabitView: View {
         )
     }
 }
-
 
 #Preview {
     AddHabitView { _ in }

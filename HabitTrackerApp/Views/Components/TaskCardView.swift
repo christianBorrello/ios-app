@@ -25,6 +25,11 @@ struct TaskCardView: View {
                     Text(task.title)
                         .font(.headline)
 
+                    // 🆕 Orario del task (solo se presente)
+                    Text(task.dueDate.formatted(date: .omitted, time: .shortened))
+                        .font(.caption)
+                        .foregroundColor(.gray)
+
                     if !task.description.isEmpty {
                         Text(task.description)
                             .font(.subheadline)
