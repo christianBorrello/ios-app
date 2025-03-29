@@ -10,10 +10,15 @@ struct ProgressView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
 
+                    Text("Progressi")
+                        .font(.largeTitle)
+                        .bold()
+                        .padding(.bottom, 4)
+                    
                     // Titolo motivazionale
                     VStack(alignment: .leading, spacing: 4) {
                         Text("🎯 Continua così!")
@@ -60,7 +65,6 @@ struct ProgressView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Progressi")
         }
         .onAppear {
             tasksViewModel.loadMockTasks()
