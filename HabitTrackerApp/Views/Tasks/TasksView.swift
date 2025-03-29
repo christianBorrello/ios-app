@@ -6,9 +6,14 @@ struct TasksView: View {
     @State private var editingTask: TaskItem?
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
+                    Text("Task")
+                        .font(.largeTitle)
+                        .bold()
+                        .padding(.bottom, 4)
+                    
                     if !viewModel.todayTasks.isEmpty {
                         Text("Oggi")
                             .font(.title3).bold()
@@ -37,11 +42,13 @@ struct TasksView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Task")
+        
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddTask = true }) {
                         Image(systemName: "plus")
+                            .padding(6)
+                            .padding(.trailing, 6)
                     }
                 }
             }

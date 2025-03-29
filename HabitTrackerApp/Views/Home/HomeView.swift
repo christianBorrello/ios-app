@@ -39,77 +39,34 @@ struct HomeView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 32) {
-
-                    // Sezione Oggi (solo Task)
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Tasks - \(formattedToday)")
-                            .font(.title3)
-                            .bold()
-
-                        let todayTasks = tasksViewModel.tasks.filter {
-                            Calendar.current.isDateInToday($0.dueDate)
-                        }
-
-                        ForEach(todayTasks) { task in
-                            TaskCardView(
-                                task: task,
-                                onToggle: { tasksViewModel.toggleCompletion(task) },
-                                onTap: { editingTask = task },
-                                isToday: true
-                            )
-                        }
-                    }
-
-                    // Sezione: Tutte le abitudini attive (con anteprima)
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Tutte le abitudini attive")
-                            .font(.title3)
-                            .bold()
-
-                        ForEach(habitsViewModel.habits.prefix(habitPreviewLimit)) { habit in
-                            HabitCardView(
-                                habit: habit,
-                                currentWeekday: currentWeekday,
-                                currentDate: today,
-                                onToggle: {}, // disattivo toggle
-                                onTap: { editingHabit = habit },
-                                isToday: false
-                            )
-                        }
-
-                        if habitsViewModel.habits.count > habitPreviewLimit {
-                            Button(action: {
-                                showingCalendar = true
-                            }) {
-                                HStack {
-                                    Spacer()
-                                    Text("Vedi tutte le abitudini")
-                                        .font(.caption)
-                                        .padding(8)
-                                    Spacer()
-                                }
-                                .background(Color.blue.opacity(0.1))
-                                .cornerRadius(8)
-                            }
-                        }
-                    }
+                    
+                    // Titolo "Home"
+                    Text("Home")
+                        .font(.largeTitle)
+                        .bold()
+                        .padding(.bottom, 4)
+                    
+                    todayTasksSection
+                    habitsPreviewSection
                 }
-                .padding()
             }
-            .navigationTitle("Home")
+            .padding (.top, 24)
+            .padding(.horizontal)
+            //.navigationTitle("Home")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
+                    Button {
                         showingCalendar = true
-                    }) {
+                    } label: {
                         Image(systemName: "calendar")
-                            .resizable()                   // permette il ridimensionamento
-                            .frame(width: 24, height: 24)  // imposta dimensione icona
-                            .foregroundColor(.primary)     // colore (opzionale)
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(.primary)
                             .padding(6)
+                            .padding(.trailing, 6) 
                     }
                 }
             }
@@ -140,6 +97,63 @@ struct HomeView: View {
             }
         }
     }
+
+    private var todayTasksSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Tasks - \(formattedToday)")
+                .font(.title3)
+                .bold()
+
+            let todayTasks = tasksViewModel.tasks.filter {
+                Calendar.current.isDateInToday($0.dueDate)
+            }
+
+            ForEach(todayTasks) { task in
+                TaskCardView(
+                    task: task,
+                    onToggle: { tasksViewModel.toggleCompletion(task) },
+                    onTap: { editingTask = task },
+                    isToday: true
+                )
+            }
+        }
+    }
+
+    private var habitsPreviewSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Tutte le abitudini attive")
+                .font(.title3)
+                .bold()
+
+            ForEach(habitsViewModel.habits.prefix(habitPreviewLimit)) { habit in
+                HabitCardView(
+                    habit: habit,
+                    currentWeekday: currentWeekday,
+                    currentDate: today,
+                    onToggle: {}, // disattivo toggle
+                    onTap: { editingHabit = habit },
+                    isToday: false
+                )
+            }
+
+            if habitsViewModel.habits.count > habitPreviewLimit {
+                Button(action: {
+                    showingCalendar = true
+                }) {
+                    HStack {
+                        Spacer()
+                        Text("Vedi tutte le abitudini")
+                            .font(.caption)
+                            .padding(8)
+                        Spacer()
+                    }
+                    .background(Color.blue.opacity(0.1))
+                    .cornerRadius(8)
+                }
+            }
+        }
+    }
+
 }
 
 

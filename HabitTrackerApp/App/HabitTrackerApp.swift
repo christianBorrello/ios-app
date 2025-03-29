@@ -6,7 +6,7 @@ struct HabitTrackerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainTabView()
+            CustomTabView()
                 .preferredColorScheme(selectedTheme.colorScheme)
                 .animation(.easeInOut, value: selectedTheme)
         }

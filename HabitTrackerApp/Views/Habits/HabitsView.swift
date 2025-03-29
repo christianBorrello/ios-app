@@ -11,9 +11,14 @@ struct HabitsView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
+                    Text("Abitudini attive")
+                        .font(.largeTitle)
+                        .bold()
+                        .padding(.bottom, 4)
+                    
                     ForEach(viewModel.habits) { habit in
                         HabitCardView(
                             habit: habit,
@@ -31,11 +36,12 @@ struct HabitsView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Abitudini Attive")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddHabit = true }) {
                         Image(systemName: "plus")
+                            .padding(6)
+                            .padding(.trailing, 6)
                     }
                 }
             }
